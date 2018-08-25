@@ -15,13 +15,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        //gets called when your app gets loaded up, the first thing that happens.
+        print("did finish launching")
         return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        //something happens with the phone when they are in the middle of something. a call for example.. if they are filling a form for example.. do they need to start again?.. open a different app or press home button
+        print("application did enter background")
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -38,7 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        // your application is being terminated.. if another app needs lots of resources it might end up killing our app in the background... or the user might kill it
+        print("app terminated")
     }
 
 
