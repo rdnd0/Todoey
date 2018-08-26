@@ -10,15 +10,29 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
     
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // So our locally saved info shows here whenever the app comes back we need to specify here which item array shoudl be used
         
-        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem2.title = "Buy Eggos"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem3.title = "Destroy Demogorgon"
+        itemArray.append(newItem3)
+        
+        
+        // So our locally saved info shows here whenever the app comes back we need to specify here which item array should be used
+
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
             itemArray = items
         }
     }
@@ -33,12 +47,29 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        // called initially
         //let cell = tableView.dequeueReusableCell(withIdentifier: the identifier we gave to our prototypecell table view identifier, for: indexPath)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+       
+        let item = itemArray[indexPath.row] //create new constant to make our coding simpler
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+//        //current alternative, before using ternary
+//        if item.picked == true {
+//            cell.accessoryType = .checkmark
+//        }
+//        else {
+//            cell.accessoryType = .none
+//        }
+        
+
+        //ternary operator as an alternative to shorten code, when should the cell be marked with what
+        // value = condition ? valueIfTrue : valueIfFalse
+        
+        cell.accessoryType = item.picked ? .checkmark : .none
+    
         
         return cell 
     }
@@ -47,21 +78,27 @@ class TodoListViewController: UITableViewController {
     //telling the system a row is selected, we are saying what do we want to happen when the row is selected
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print(itemArray[indexPath.row])
-        //deselect row when unclicking, it does not stay grey all the time
-        tableView.deselectRow(at: indexPath, animated: true)
+        
 //get a check mark in the row
 //        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         
    //remove the check mark when clicking again, use an if statement to check if it has it already to take it out when clicking again
-        
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        
-        else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
     
+        //sets the current property to the opposite of what it is right now
+    itemArray[indexPath.row].picked = !itemArray[indexPath.row].picked
+      
+        tableView.reloadData() //so it takes into consideration the logic for marked/unmarked from the above code
+        
+   //original code before using class to create items
+//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+//        }
+//
+//        else {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+//        }
+        //deselect row when unclicking, it does not stay grey all the time
+        tableView.deselectRow(at: indexPath, animated: true)
         
     }
     
@@ -76,7 +113,10 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //what will happen when the user clicks add new item button
-            self.itemArray.append(textField.text!)
+            
+            let newItem = Item() //creating a local constant out of our class
+            newItem.title = textField.text!
+            self.itemArray.append(newItem)
             
             self.tableView.reloadData() //we need to reload the table so the new item in the array is considered
             //where we add the item array to our defaults, so we do not lose info
