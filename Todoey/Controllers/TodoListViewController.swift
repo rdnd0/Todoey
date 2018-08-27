@@ -13,22 +13,29 @@ class TodoListViewController: UITableViewController {
     var itemArray = [Item]()
     
     let defaults = UserDefaults.standard
-    
+    //saving data to the local files
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        itemArray.append(newItem)
         
-        let newItem2 = Item()
-        newItem2.title = "Buy Eggos"
-        itemArray.append(newItem2)
         
-        let newItem3 = Item()
-        newItem3.title = "Destroy Demogorgon"
-        itemArray.append(newItem3)
+        print(dataFilePath)
+        //the manual way of creating items
+//        let newItem = Item()
+//        newItem.title = "Find Mike"
+//        itemArray.append(newItem)
+//
+//        let newItem2 = Item()
+//        newItem2.title = "Buy Eggos"
+//        itemArray.append(newItem2)
+//
+//        let newItem3 = Item()
+//        newItem3.title = "Destroy Demogorgon"
+//        itemArray.append(newItem3)
         
+ //new function so items come from the saved directory
+        loadItems()
         
         // So our locally saved info shows here whenever the app comes back we need to specify here which item array should be used
 
@@ -86,8 +93,12 @@ class TodoListViewController: UITableViewController {
     
         //sets the current property to the opposite of what it is right now
     itemArray[indexPath.row].picked = !itemArray[indexPath.row].picked
+        
+        saveFiles()
+        
+        
       
-        tableView.reloadData() //so it takes into consideration the logic for marked/unmarked from the above code
+//        tableView.reloadData() //so it takes into consideration the logic for marked/unmarked from the above code, commented out as it is already part of the function save files
         
    //original code before using class to create items
 //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
@@ -119,9 +130,13 @@ class TodoListViewController: UITableViewController {
             self.itemArray.append(newItem)
             
             self.tableView.reloadData() //we need to reload the table so the new item in the array is considered
-            //where we add the item array to our defaults, so we do not lose info
+         
+            //NSCoder, saving files locally
+            self.saveFiles()
             
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            
+            
+            
             
         }
         
@@ -143,5 +158,31 @@ class TodoListViewController: UITableViewController {
     
     
 }
+    
+    //MARK - Model Manipulation Methods
+    // func to save files to the nscoder
+    
+    func saveFiles() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+            
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        tableView.reloadData()
+    }
+    
+    func loadItems() {
+       if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do { itemArray = try decoder.decode([Item].self , from: data)
+            } catch {
+                print("Error decoding the array \(error)")
+            }
+        }
+    }
 
 }

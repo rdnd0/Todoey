@@ -16,7 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         //gets called when your app gets loaded up, the first thing that happens.
-        print("did finish launching")
+
+        
+        
         return true
     }
 
